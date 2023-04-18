@@ -1,0 +1,3 @@
+[console_scripts]
+tf_map = puzzlebot_gazebo.tf_map:main
+

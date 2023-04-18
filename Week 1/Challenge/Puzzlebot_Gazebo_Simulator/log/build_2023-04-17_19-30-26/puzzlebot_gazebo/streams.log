@@ -1,0 +1,10 @@
+[0.371s] Invoking command in '/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo': PYTHONPATH=/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo/prefix_override:/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo/build --no-deps install_data
+[0.500s] running develop
+[0.570s] running egg_info
+[0.570s] writing puzzlebot_gazebo.egg-info/PKG-INFO
+[0.570s] writing dependency_links to puzzlebot_gazebo.egg-info/dependency_links.txt
+[0.570s] writing entry points to puzzlebot_gazebo.egg-info/entry_points.txt
+[0.570s] writing requirements to puzzlebot_gazebo.egg-info/requires.txt
+[0.570s] writing top-level names to puzzlebot_gazebo.egg-info/top_level.txt
+[0.589s] error: package directory 'puzzlebot_gazebo' does not exist
+[0.603s] Invoked command in '/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo' returned '1': PYTHONPATH=/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo/prefix_override:/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo/build --no-deps install_data

@@ -1,0 +1,9 @@
+source;share/puzzlebot_world/hook/pythonpath.ps1
+source;share/puzzlebot_world/hook/pythonpath.dsv
+source;share/puzzlebot_world/hook/pythonpath.sh
+source;share/puzzlebot_world/hook/ament_prefix_path.ps1
+source;share/puzzlebot_world/hook/ament_prefix_path.dsv
+source;share/puzzlebot_world/hook/ament_prefix_path.sh
+source;../../build/puzzlebot_world/share/puzzlebot_world/hook/pythonpath_develop.ps1
+source;../../build/puzzlebot_world/share/puzzlebot_world/hook/pythonpath_develop.dsv
+source;../../build/puzzlebot_world/share/puzzlebot_world/hook/pythonpath_develop.sh

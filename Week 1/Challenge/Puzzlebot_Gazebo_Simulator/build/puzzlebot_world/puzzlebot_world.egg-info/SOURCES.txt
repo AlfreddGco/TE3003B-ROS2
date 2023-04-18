@@ -1,0 +1,15 @@
+package.xml
+setup.cfg
+setup.py
+launch/puzzlebot_simple_world.launch
+launch/world_editor.launch
+puzzlebot_world/__init__.py
+puzzlebot_world.egg-info/PKG-INFO
+puzzlebot_world.egg-info/SOURCES.txt
+puzzlebot_world.egg-info/dependency_links.txt
+puzzlebot_world.egg-info/entry_points.txt
+puzzlebot_world.egg-info/requires.txt
+puzzlebot_world.egg-info/top_level.txt
+puzzlebot_world.egg-info/zip-safe
+resource/puzzlebot_world
+worlds/track.sdf

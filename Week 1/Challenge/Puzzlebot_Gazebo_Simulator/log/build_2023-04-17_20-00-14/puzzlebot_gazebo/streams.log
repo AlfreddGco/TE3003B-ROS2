@@ -1,0 +1,26 @@
+[0.379s] Invoking command in '/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo': PYTHONPATH=/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo/prefix_override:/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo/build --no-deps install_data
+[0.506s] running develop
+[0.576s] running egg_info
+[0.576s] writing puzzlebot_gazebo.egg-info/PKG-INFO
+[0.577s] writing dependency_links to puzzlebot_gazebo.egg-info/dependency_links.txt
+[0.577s] writing entry points to puzzlebot_gazebo.egg-info/entry_points.txt
+[0.577s] writing requirements to puzzlebot_gazebo.egg-info/requires.txt
+[0.577s] writing top-level names to puzzlebot_gazebo.egg-info/top_level.txt
+[0.597s] reading manifest file 'puzzlebot_gazebo.egg-info/SOURCES.txt'
+[0.597s] writing manifest file 'puzzlebot_gazebo.egg-info/SOURCES.txt'
+[0.617s] running build_ext
+[0.617s] Creating /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/lib/python3.8/site-packages/puzzlebot-gazebo.egg-link (link to .)
+[0.617s] Installing tf_map script to /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/lib/puzzlebot_gazebo
+[0.617s] 
+[0.617s] Installed /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo
+[0.617s] running install_data
+[0.618s] creating /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/urdf
+[0.618s] copying urdf/macros.xacro -> /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/urdf
+[0.618s] copying urdf/parameters.xacro -> /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/urdf
+[0.618s] copying urdf/materials.xacro -> /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/urdf
+[0.618s] copying urdf/puzzlebot.xacro -> /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/urdf
+[0.618s] creating /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/meshes
+[0.618s] copying meshes/wheel.stl -> /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/meshes
+[0.618s] copying meshes/chassis.stl -> /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/meshes
+[0.625s] copying meshes/camera.stl -> /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/share/puzzlebot_gazebo/meshes
+[0.644s] Invoked command in '/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo' returned '0': PYTHONPATH=/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo/prefix_override:/home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/install/puzzlebot_gazebo/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --editable --build-directory /home/alfredo/Documents/TE3003B/Week 1/Challenge/Puzzlebot_Gazebo_Simulator/build/puzzlebot_gazebo/build --no-deps install_data
