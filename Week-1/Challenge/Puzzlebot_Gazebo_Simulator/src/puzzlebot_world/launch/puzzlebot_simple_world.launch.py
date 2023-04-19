@@ -8,6 +8,7 @@ from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
+from launch.actions import SetEnvironmentVariable
 
 import xacro
 
@@ -26,6 +27,11 @@ def get_puzzlebot_urdf():
 
 
 def generate_launch_description():
+    SetEnvironmentVariable(
+        name='GAZEBO_MODEL_PATH', value=puzzlebot_world_path + '/models'),
+    SetEnvironmentVariable(
+        name='GAZEBO_RESOURCE_PATH', value=puzzlebot_world_path + '/models'),
+
     gazebo_dir = get_package_share_directory('gazebo_ros')
     gz_server = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([

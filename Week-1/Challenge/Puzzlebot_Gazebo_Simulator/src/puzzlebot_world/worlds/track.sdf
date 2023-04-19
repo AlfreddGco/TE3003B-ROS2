@@ -30,10 +30,12 @@
             <size>3 3</size>
           </plane>
         </geometry>        
-        <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
-            <specular>1 0 0 1</specular>
+        <material>Gazebo/Red
+            <script>
+                <uri>model://track/materials/scripts</uri>
+                <uri>model://track/materials/textures/</uri>
+                <name>track</name>
+            </script>
         </material>
       </visual>
       <collision name="track_collision">
@@ -104,9 +106,10 @@
             </box>
           </geometry>
           <material>
-            <ambient>0 0 0 1</ambient>
-            <diffuse>0 0 0 1</diffuse>
-            <specular>0 0 0 1</specular>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/FlatBlack</name>
+            </script>
           </material>
         </visual>
         <self_collide>0</self_collide>
