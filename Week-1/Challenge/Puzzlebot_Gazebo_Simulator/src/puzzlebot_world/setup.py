@@ -16,7 +16,7 @@ setup(
         # Include our package.xml file
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch',
-            glob(os.path.join('launch', '*.launch'))),
+            glob(os.path.join('launch', '*.launch*'))),
         ('share/' + package_name + '/worlds',
             glob(os.path.join('worlds', '*.sdf'))),
         ('share/' + package_name + '/meshes',
