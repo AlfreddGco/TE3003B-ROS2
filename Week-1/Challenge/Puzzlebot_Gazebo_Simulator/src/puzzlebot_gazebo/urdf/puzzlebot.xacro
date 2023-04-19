@@ -5,8 +5,8 @@
   <!-- files for gazebo costumization -->
   <xacro:include filename="$(find puzzlebot_gazebo)/urdf/materials.xacro" />
   <xacro:include filename="$(find puzzlebot_gazebo)/urdf/parameters.xacro" />
-  <xacro:include filename="$(find puzzlebot_gazebo)/urdf/puzzlebot.gazebo" />
   <xacro:include filename="$(find puzzlebot_gazebo)/urdf/macros.xacro" />  
+  <xacro:include filename="$(find puzzlebot_gazebo)/urdf/puzzlebot.gazebo" />
 
     <!-- Dummy link to fiz robot chassis -->
   <link name="base_link">
@@ -231,9 +231,4 @@
                 <state_interface name="effort"/>
               </joint>
             </ros2_control>
-            <gazebo>
-              <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-                <parameters>$(find puzzlebot_gazebo)/config_files/puzzlebot_controller_effort.yaml</parameters>
-              </plugin>
-            </gazebo>
           </robot>

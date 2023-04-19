@@ -27,10 +27,12 @@
     <material>Gazebo/Black</material>
   </gazebo>
 
-<gazebo>
-  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-  </plugin>
-</gazebo>
+  <gazebo>
+    <!-- updated gazebo_ros_control to gazebo_ros2_control -->
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <parameters>$(find puzzlebot_gazebo)/config_files/puzzlebot_controller_effort.yaml</parameters>
+    </plugin>
+  </gazebo>
    
   <!-- Standard Rapberry camera -->
   <gazebo reference="camera">
