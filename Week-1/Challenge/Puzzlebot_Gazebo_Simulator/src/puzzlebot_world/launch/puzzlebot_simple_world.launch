@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- Set up env variable so plugin and textures are found -->
+  <!-- 
+    <env name="GAZEBO_PLUGIN_PATH" value="$(find puzzlebot_world)/plugins"/> 
+    <env name="GAZEBO_MODEL_PATH" value="$(find puzzlebot_world)/models"/>
+    <env name="GAZEBO_RESOURCE_PATH" value="$(find puzzlebot_world)/models" />
+  -->
+
+      <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+        <include file="$(find-pkg-share gazebo_ros)/launch/gazebo.launch.py">
+          <arg name="world" value="$(find-pkg-share puzzlebot_world)/worlds/track.world"/>
+        </include>
+
+
+              <node name="robot_state_publisher" pkg="robot_state_publisher" exec="robot_state_publisher" respawn="false" output="screen">
+                <param name="robot_description" value="$(command 'xacro $(find-pkg-share puzzlebot_gazebo)/urdf/puzzlebot.xacro')"  />
+              </node>
+
+        <node name="puzzlebot_spawn" pkg="gazebo_ros" exec="spawn_entity.py"  output="screen"
+          args="-entity puzzlebot -topic /robot_description" />
+
+                <node name="joint_state_publisher"  pkg="joint_state_publisher" exec="joint_state_publisher" respawn="false" output="screen"> 
+                </node>
+
+  <!--
+  <node name="puzzlebot_controller" pkg="puzzlebot_control" exec="puzzlebot_control_node"/>
+  <include file="$(find-pkg-share puzzlebot_control)/launch/puzzlebot_control.launch"/>"
+  -->
+</launch>
+
+
