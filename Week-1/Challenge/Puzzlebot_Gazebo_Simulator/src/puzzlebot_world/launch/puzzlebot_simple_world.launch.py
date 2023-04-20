@@ -75,15 +75,18 @@ def generate_launch_description():
         output='screen'
     )
 
+    ros_distro = os.getenv('ROS_DISTRO')
+    state_cmd = 'active' if ros_distro == 'humble' else 'start'
+
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
-            '--set-state', 'start', 'joint_state_broadcaster'],
+        '--set-state', state_cmd, 'joint_state_broadcaster'],
         output='screen'
     )
 
     load_joint_trajectory_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
-            '--set-state', 'start', 'effort_controllers'],
+            '--set-state', state_cmd, 'effort_controllers'],
         output='screen'
     )
 
