@@ -8,7 +8,7 @@ from geometry_msgs.msg import Twist
 
 TOPIC_WHEELS_VEL_CMD = '/velocity_controller/commands'
 # TODO: Load from yaml controller file
-JOINTS_STATE_TOPIC = '/joint_states'
+TOPIC_JOINTS_STATE = '/joint_states'
 # wheels
 JOINTS = [
     { "name": "base_to_left_w", "publish_velocity": "wl" },
@@ -25,7 +25,7 @@ class PuzzlebotControl(Node):
   def __init__(self, joints = JOINTS):
     super().__init__('puzzlebot_control_node')
     # velocities unwrapping
-    self.create_subscription(JointState, JOINTS_STATE_TOPIC,
+    self.create_subscription(JointState, TOPIC_JOINTS_STATE,
       self.unwrap_joint_states, 10)
     self.init_joints(joints)
 
