@@ -38,8 +38,8 @@ int main(int arc, char ** argv)
     ros::Publisher pub_wl = nh.advertise<std_msgs::Float32>(topics["pub_wl"],100);
     ros::Publisher pub_wr = nh.advertise<std_msgs::Float32>(topics["pub_wr"],100);
 
-    ros::Subscriber sub_wr = nh.subscribe(topics["sub_wr"],10,wr_callback);
-    ros::Subscriber sub_wl = nh.subscribe(topics["sub_wl"],10,wl_callback);
+    ros::Subscriber sub_wr = nh.subscribe(topics["sub_wr"], 10, wr_callback);
+    ros::Subscriber sub_wl = nh.subscribe(topics["sub_wl"], 10, wl_callback);
 
     ros::Subscriber sub_cmd_vel = nh.subscribe(topics["cmd_vel"],10,cmd_vel_callback);
     int i = 0;
