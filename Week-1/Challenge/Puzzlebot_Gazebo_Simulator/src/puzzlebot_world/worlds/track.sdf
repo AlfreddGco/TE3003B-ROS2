@@ -18,6 +18,10 @@
       filename="ignition-gazebo-scene-broadcaster-system"
       name="ignition::gazebo::systems::SceneBroadcaster">
     </plugin>
+    <plugin
+      filename="libgazebo_ros_state.so"
+      name="gazebo_states">
+    </plugin>
   <model name="track">
   <pose>0 0 0 0 -0 0</pose>
     <static>true</static>
