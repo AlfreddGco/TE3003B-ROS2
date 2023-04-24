@@ -49,17 +49,9 @@ def generate_launch_description():
 
     puzzlebot_urdf = get_puzzlebot_urdf()
  
-    node_robot_state_publisher = Node(
+    robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        output='screen',
-        parameters=[{
-            'robot_description': puzzlebot_urdf.toxml()
-        }]
-    )
-
-    node_robot_joint_state_publisher = Node(
-        package='joint_state_publisher', executable='joint_state_publisher',
         output='screen',
         parameters=[{
             'robot_description': puzzlebot_urdf.toxml()
@@ -78,15 +70,20 @@ def generate_launch_description():
     ros_distro = os.getenv('ROS_DISTRO')
     state_cmd = 'active' if ros_distro == 'humble' else 'start'
 
-    load_joint_state_controller = ExecuteProcess(
+    load_joint_state_broadcaster = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
-        '--set-state', state_cmd, 'joint_state_broadcaster'],
+            '--set-state', state_cmd, 'joint_state_broadcaster'],
         output='screen'
     )
 
-    load_joint_trajectory_controller = ExecuteProcess(
+    load_velocity_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
             '--set-state', state_cmd, 'velocity_controller'],
+        output='screen'
+    )
+
+    puzzlebot_control_node = Node(
+        package='puzzlebot_control', executable='control_node',
         output='screen'
     )
 
@@ -94,17 +91,18 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn_puzzlebot,
-                on_exit=[load_joint_state_controller],
+                on_exit=[load_joint_state_broadcaster],
             )
         ),
         RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=load_joint_state_controller,
-                on_exit=[load_joint_trajectory_controller],
+                target_action=load_joint_state_broadcaster,
+                on_exit=[load_velocity_controller],
             )
         ),
         gz_server, gz_client,
-        node_robot_state_publisher,
         spawn_puzzlebot,
+        robot_state_publisher,
+        puzzlebot_control_node,
     ])
 
