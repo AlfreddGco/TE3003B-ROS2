@@ -1,4 +1,6 @@
+import os
 from setuptools import setup
+from glob import glob
 
 package_name = 'puzzlebot_sim'
 
@@ -11,6 +13,8 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name, ['simulation_config.rviz']),
+        ('share/' + package_name + '/launch',
+            glob(os.path.join('launch', '*.launch*'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

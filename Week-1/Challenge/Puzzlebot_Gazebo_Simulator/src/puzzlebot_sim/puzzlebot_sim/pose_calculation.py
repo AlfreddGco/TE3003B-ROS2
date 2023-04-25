@@ -71,7 +71,7 @@ class PoseCalculation(Node):
         self.broadcaster.sendTransform(stamped_transform)
 
 
-if __name__ == '__main__':
+def main():
     rclpy.init()
     node = PoseCalculation()
     try:
@@ -82,3 +82,5 @@ if __name__ == '__main__':
         node.destroy_node()
         rclpy.try_shutdown()
 
+if __name__ == '__main__':
+    main()

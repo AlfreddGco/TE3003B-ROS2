@@ -28,8 +28,13 @@ def generate_launch_description():
         package='puzzlebot_sim', executable='pose_calculation',
         output='screen'
     )
+    # node_data_gathering = Node (
+    #     package='puzzlebot_sim', executable='data_gathering',
+    #     output='screen'
+    # )
     return LaunchDescription([
         node_rviz_puzzlebot,
         node_pose_calculation,
+        # node_data_gathering,
     ])
 
