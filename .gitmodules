@@ -1,0 +1,4 @@
+[submodule "Week-1/Challenge/Puzzlebot_Gazebo_Simulator/src/robot_state_publisher"]
+	path = Week-1/Challenge/Puzzlebot_Gazebo_Simulator/src/robot_state_publisher
+	url = https://github.com/AlfreddGco/robot_state_publisher.git
+	branch = foxy
