@@ -4,9 +4,8 @@ from rclpy.node import Node
 
 import numpy as np
 from time import time
-from tf2_ros import TransformBroadcaster
 
-from geometry_msgs.msg import Twist, TransformStamped, Vector3
+from geometry_msgs.msg import Twist, Vector3
 from tf2_geometry_msgs import PoseStamped
 
 TOPIC_VEL_CMD = '/cmd_vel'
@@ -28,8 +27,6 @@ class PoseCalculation(Node):
         self.publisher_pose = self.create_publisher(
             PoseStamped, TOPIC_CALCULATED_POSE, 10) 
         
-        self.broadcaster = TransformBroadcaster(self)
-
         self.x, self.y, self.theta = 0, 0, 0
         self.t = 0
 
@@ -60,15 +57,6 @@ class PoseCalculation(Node):
         stamped_pose.pose.orientation.z = q[2]
         stamped_pose.pose.orientation.w = q[3]
         self.publisher_pose.publish(stamped_pose)
-
-        stamped_transform = TransformStamped()
-        stamped_transform.header.stamp = self.get_clock().now().to_msg()
-        stamped_transform.header.frame_id = 'base_link'
-        stamped_transform.child_frame_id = 'chassis'
-        stamped_transform.transform.translation.x = self.x
-        stamped_transform.transform.translation.y = self.y
-        stamped_transform.transform.rotation = stamped_pose.pose.orientation
-        self.broadcaster.sendTransform(stamped_transform)
 
 
 def main():

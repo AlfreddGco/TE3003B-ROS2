@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pose_calculation = ' + package_name + '.pose_calculation:main'
+            'puzzlebot_tf = ' + package_name + '.puzzlebot_tf:main'
         ],
     },
 )
