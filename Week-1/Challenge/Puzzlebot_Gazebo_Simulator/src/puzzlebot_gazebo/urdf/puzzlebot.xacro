@@ -220,5 +220,10 @@
                 <state_interface name="velocity"/>
                 <state_interface name="effort"/>
               </joint>
+              <joint name="base_link_to_chassis">
+                <state_interface name="position" />
+                <state_interface name="velocity"/>
+                <state_interface name="effort"/>
+              </joint>
             </ros2_control>
           </robot>
