@@ -5,8 +5,9 @@ from rclpy.node import Node
 import numpy as np
 from time import time
 
-from geometry_msgs.msg import Twist, Vector3
+from geometry_msgs.msg import Twist
 from tf2_geometry_msgs import PoseStamped
+from std_srvs.srv import Empty
 
 TOPIC_VEL_CMD = '/cmd_vel'
 TOPIC_CALCULATED_POSE = '/calculated_pose'
@@ -27,8 +28,18 @@ class PoseCalculation(Node):
         self.publisher_pose = self.create_publisher(
             PoseStamped, TOPIC_CALCULATED_POSE, 10) 
         
+        self.reset_service = self.create_service(
+            Empty, 'reset_pose_calculation', self.reset_state)
         self.x, self.y, self.theta = 0, 0, 0
         self.t = 0
+
+
+    def reset_state(self, _, res):
+        self.get_logger().info('Resetting state')
+        self.x, self.y = 0, 0
+        self.theta = 0
+        self.t = 0
+        return res
 
 
     def calculate_position(self, twist_vel):

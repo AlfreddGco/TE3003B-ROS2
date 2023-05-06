@@ -15,6 +15,7 @@ setup(
         ('share/' + package_name, ['simulation_config.rviz']),
         ('share/' + package_name + '/launch',
             glob(os.path.join('launch', '*.launch*'))),
+        
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,9 +26,11 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'pose_calculation = ' + package_name + '.pose_calculation:main'
-            'puzzlebot_tf = ' + package_name + '.puzzlebot_tf:main'
+            'pose_calculation = ' + package_name + '.pose_calculation:main',
+            'puzzlebot_tf = ' + package_name + '.puzzlebot_tf:main',
+            'data_gathering = ' + package_name + '.data_gathering:main',
+            'service = pose_calculation:main',
+            'client = data_gathering:main',
         ],
     },
 )
-
