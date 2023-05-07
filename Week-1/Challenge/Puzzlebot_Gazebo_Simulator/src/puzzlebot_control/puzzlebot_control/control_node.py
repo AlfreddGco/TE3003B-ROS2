@@ -52,7 +52,7 @@ class PuzzlebotControl(Node):
       wr = (v - w * L / 2.0) / R 
       cmd_vels = Float64MultiArray()
       cmd_vels.data.append(wl)
-      cmd_vels.data.append(wl)
+      cmd_vels.data.append(wr)
       self.publisher_wheels_cmd.publish(cmd_vels)
 
 
