@@ -23,35 +23,37 @@ def quaternion_from_euler(roll, pitch, yaw):
 class PoseCalculation(Node):
     def __init__(self):
         super().__init__('puzzlebot_pose_calculation')
+        self.x, self.y, self.theta = 0.0, 0.0, 0.0
+        self.t = 0
         self.create_subscription(Twist, TOPIC_VEL_CMD,
             self.calculate_position, 10)
         self.publisher_pose = self.create_publisher(
             PoseStamped, TOPIC_CALCULATED_POSE, 10) 
-        
         self.reset_service = self.create_service(
             Empty, 'reset_pose_calculation', self.reset_state)
-        self.x, self.y, self.theta = 0, 0, 0
-        self.t = 0
+        self.create_timer(0.01, self.publish_pose_and_transform)
 
 
     def reset_state(self, _, res):
         self.get_logger().info('Resetting state')
-        self.x, self.y = 0, 0
-        self.theta = 0
-        self.t = 0
+        self.x, self.y = 0.0, 0.0
+        self.theta = 0.0
+        self.t = 0.0
         return res
 
 
     def calculate_position(self, twist_vel):
+        if(self.t == 0):
+            self.t = time()
+            return
         linear_vel = twist_vel.linear.x
         angular_vel = twist_vel.angular.z
         now = time()
         dt = now - self.t
-        self.theta = angular_vel*dt
+        self.theta += angular_vel*dt
         self.x += linear_vel*dt * np.cos(self.theta)
         self.y += linear_vel*dt * np.sin(self.theta)
         self.t = now
-        self.publish_pose_and_transform()
 
 
     def publish_pose_and_transform(self):
