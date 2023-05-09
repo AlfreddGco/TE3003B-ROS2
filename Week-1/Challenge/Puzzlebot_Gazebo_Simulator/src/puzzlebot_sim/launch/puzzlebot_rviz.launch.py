@@ -39,9 +39,9 @@ def generate_launch_description():
     )
     
     return LaunchDescription([
-        node_rviz_puzzlebot,
+        # node_rviz_puzzlebot,
         node_pose_calculation,
         node_tf_puzzlebot,
-        node_data_gathering,
+        # node_data_gathering,
     ])
 
