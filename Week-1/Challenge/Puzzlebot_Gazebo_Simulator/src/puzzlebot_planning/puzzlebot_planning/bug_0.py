@@ -56,7 +56,7 @@ class BugZero:
       global_boundary = position + boundary
       x, y = global_boundary[0], global_boundary[1]
       if(m_l == float('inf') or m_r == float('inf')):
-        if(x > left_line[1] and x < right_line[1]):
+        if(x > b_l and x < b_r):
           return False
       below_left = (m_l*x + b_l) > y
       above_right = (m_r*x + b_r) < y
