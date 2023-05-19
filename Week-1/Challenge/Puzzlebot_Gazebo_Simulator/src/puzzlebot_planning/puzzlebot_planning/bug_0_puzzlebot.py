@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import csv, time, math
+import math
 
 import rclpy
 from rclpy.node import Node
@@ -11,17 +11,14 @@ from tf_transformations import euler_from_quaternion
 from puzzlebot_planning.bug_0 import *
 
 from sensor_msgs.msg import LaserScan
-from std_msgs.msg import Empty
-from geometry_msgs.msg import Twist, Pose
+from geometry_msgs.msg import Twist
 from tf2_geometry_msgs import PoseStamped
-from gazebo_msgs.msg import ModelStates
-from gazebo_msgs.srv import SetEntityState
 
-from std_srvs.srv import Empty
-
-TOPIC_CALCULATED_POSE = '/calculated_pose'
+TOPIC_CALCULATED_POSE = '/gt_pose'
 TOPIC_LIDAR_SCAN = '/scan'
 TOPIC_VEL_CMD = '/cmd_vel'
+
+DEBUG = True
 
 class PuzzlebotBug(Node):
   def __init__(self):
@@ -30,10 +27,10 @@ class PuzzlebotBug(Node):
     self.position = np.array([0, 0])
     self.orientation = 0
 
-    self.goal = np.array([0, 2])
+    self.goal = np.array([7, 0])
     self.lidar_data = np.array([])
 
-    self.bug = BugZero(30)
+    self.bug = BugZero(0.5)
     self.bug.set_goal(self.goal)
 
     self.create_subscription(
@@ -49,10 +46,8 @@ class PuzzlebotBug(Node):
     l = len(msg.ranges)
     vectors = []
     for idx, d in enumerate(ranges):
-      deg = (idx / l)*360
-      # Lidar angle 0 is puzzlebot angle 180
-      rad = np.deg2rad(deg + 180)
-      vectors.append([d*sin(rad), d*cos(rad)])
+      rad = (idx / l)*2*np.pi
+      vectors.append([d*-sin(rad), d*cos(rad)])
     self.lidar_data = np.array(vectors)
   
 
@@ -61,21 +56,35 @@ class PuzzlebotBug(Node):
     orientation = msg.pose.orientation
     quats = [orientation.x, orientation.y, orientation.z, orientation.w]
     eulers = euler_from_quaternion(quats)
-    self.orientation = eulers[2]
+    yaw = eulers[2]
+    if(yaw < 0):
+        yaw = 2*np.pi + yaw
+    self.orientation = yaw
 
 
   def publish_direction(self, direction):
-    direction = unit_vector(direction)
-    angle_error = math.atan2(direction[1], direction[0]) - self.orientation
-    twist_msg = Twist()
+    direction = rotate_vec(direction, self.orientation*180/np.pi)
+    target_angle = math.atan2(direction[1], direction[0])
+    if(target_angle < 0):
+      target_angle = 2*np.pi + target_angle
+    angle_error = target_angle - self.orientation
     self.get_logger().info(
-      'angle error: %.2f' % angle_error)
-    if abs(angle_error) < np.pi/55:
-      twist_msg.linear.x = 0.1
+      'target angle: %.2f' % (target_angle*180/np.pi) +
+      ' orientation: %.2f' % (self.orientation*180/np.pi) +
+      ' error angle: %.2f' % (angle_error*180/np.pi)
+    )
+    twist_msg = Twist()
+    #self.get_logger().info(
+    #  'angle error: %.2f %.2f' % (angle_error, 2*np.pi*0.003))
+    if abs(angle_error) < (2*np.pi)*0.003:
+      twist_msg.linear.x = 0.15
       twist_msg.angular.z = 0.0
     else:
       twist_msg.linear.x = 0.0
-      twist_msg.angular.z = min(0.1, 0.15*angle_error)
+      sign = (+1 if angle_error > 0 else -1)
+      if(angle_error < 0 and angle_error < -np.pi):
+        sign = +1
+      twist_msg.angular.z = 0.20*sign
     self.pub_cmd_vel.publish(twist_msg)
 
 
@@ -88,45 +97,39 @@ class PuzzlebotBug(Node):
 
   def on_goal(self):
     err = np.linalg.norm(self.goal - self.position)
-    self.get_logger().info('goal error: %.2f' % err)
+    # self.get_logger().info('goal error: %.2f' % err)
     return err < 0.1
 
 
-  def get_lidar_data(self):
-    res = []
-    for d in self.lidar_data:
-      if d[0] != float('inf') and d[1] != float('inf'):
-        res.append(d)
-    return np.array(res)
-
-
   def run(self):
-    rate = self.create_rate(50)
+    rate = self.create_rate(100)
     while not self.on_goal():
       rate.sleep()
+      if DEBUG:
+        self.stop()
+        rate.sleep()
       if len(self.lidar_data) == 0:
         continue
-      step, circumnavigating = self.bug.next_step(
-          self.position, self.lidar_data)
+      step, _ = self.bug.next_step(
+        self.position, self.lidar_data)
       self.publish_direction(step)
-    self.stop()
-    self.stop()
 
 
 def main(args = None):
-    rclpy.init(args = args)
-    executor = MultiThreadedExecutor()
-    node = PuzzlebotBug()
-    executor.add_node(node)
-    task = executor.create_task(node.run)
-    try:
-        executor.spin_until_future_complete(task)
-    except (KeyboardInterrupt, ExternalShutdownException):
-        pass
-    finally:
-        node.destroy_node()
-        rclpy.try_shutdown()
+  rclpy.init(args = args)
+  executor = MultiThreadedExecutor()
+  node = PuzzlebotBug()
+  executor.add_node(node)
+  task = executor.create_task(node.run)
+  try:
+    executor.spin_until_future_complete(task)
+  except (KeyboardInterrupt, ExternalShutdownException):
+    pass
+  finally:
+    node.stop()
+    node.destroy_node()
+    rclpy.try_shutdown()
 
 
 if __name__ == '__main__':
-    main()    
+  main()
