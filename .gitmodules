@@ -2,3 +2,6 @@
 	path = Week-1/Challenge/Puzzlebot_Gazebo_Simulator/src/robot_state_publisher
 	url = https://github.com/AlfreddGco/robot_state_publisher.git
 	branch = foxy
+[submodule "Week-1/Challenge/Puzzlebot_Gazebo_Simulator/src/aruco_ros2"]
+	path = Week-1/Challenge/Puzzlebot_Gazebo_Simulator/src/aruco_ros2
+	url = https://gitlab.com/raymondchaneee/aruco_ros2.git
