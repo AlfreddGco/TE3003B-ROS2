@@ -3,7 +3,7 @@ from math import cos, sin
 
 import numpy as np
 
-DEBUG = True
+DEBUG = False
 
 def unit_vector(vector):
   """ Returns the unit vector of the vector.  """
@@ -89,7 +89,8 @@ class BugZero:
     return min(distances) <= self.radius
 
 
-  def _get_boundary_step(self, boundaries):
+  def _get_boundary_step(self, boundaries, orientation):
+    global DEBUG
     # no nan's nor inf's
     boundaries = self._clear_boundaries(boundaries)
     idx, closest = self._closest_boundary(boundaries)
@@ -100,14 +101,15 @@ class BugZero:
     RD_angle = angle_between(R, D)
     if(DEBUG):
       pdb.set_trace()
+    relative = -90 + orientation*180/np.pi
     if dist_to_closest > self.radius:
       # relative to the robot
-      return rotate_vec(D, -90 - 2)
+      return rotate_vec(D, relative)
     if RD_angle > (np.pi/2)*(0.98) and RD_angle < (np.pi/2)*1.02:
       # relative to the robot
-      return rotate_vec(D, -90 - 2)
+      return rotate_vec(D, relative)
     no_intersect = self.radius*cos(RD_angle)
-    return np.array([no_intersect, 0])
+    return rotate_vec(np.array([no_intersect, 0]), relative)
 
 
   def _get_goal_step(self, position):
@@ -118,7 +120,7 @@ class BugZero:
     self.goal = position
 
 
-  def next_step(self, position, boundaries):
+  def next_step(self, position, orientation, boundaries):
     if self.goal is None:
       raise Exception('goal is not set in bug object. '
         + 'Please set it with set_goal')
@@ -127,7 +129,7 @@ class BugZero:
         self.circumnavigating = False
       else:
         self.circumnavigating = True
-        return (self._get_boundary_step(boundaries),
+        return (self._get_boundary_step(boundaries, orientation),
           self.circumnavigating)
     return (self._get_goal_step(position), self.circumnavigating)
 

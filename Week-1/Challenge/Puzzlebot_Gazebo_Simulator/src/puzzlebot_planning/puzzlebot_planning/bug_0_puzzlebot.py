@@ -18,7 +18,7 @@ TOPIC_CALCULATED_POSE = '/gt_pose'
 TOPIC_LIDAR_SCAN = '/scan'
 TOPIC_VEL_CMD = '/cmd_vel'
 
-DEBUG = True
+DEBUG = False
 
 class PuzzlebotBug(Node):
   def __init__(self):
@@ -63,7 +63,7 @@ class PuzzlebotBug(Node):
 
 
   def publish_direction(self, direction):
-    direction = rotate_vec(direction, self.orientation*180/np.pi)
+    # direction = rotate_vec(direction, self.orientation*180/np.pi)
     target_angle = math.atan2(direction[1], direction[0])
     if(target_angle < 0):
       target_angle = 2*np.pi + target_angle
@@ -102,6 +102,7 @@ class PuzzlebotBug(Node):
 
 
   def run(self):
+    global DEBUG
     rate = self.create_rate(100)
     while not self.on_goal():
       rate.sleep()
@@ -111,7 +112,7 @@ class PuzzlebotBug(Node):
       if len(self.lidar_data) == 0:
         continue
       step, _ = self.bug.next_step(
-        self.position, self.lidar_data)
+        self.position, self.orientation, self.lidar_data)
       self.publish_direction(step)
 
 
