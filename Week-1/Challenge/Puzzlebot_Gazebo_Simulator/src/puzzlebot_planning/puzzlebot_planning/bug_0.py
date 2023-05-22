@@ -1,5 +1,5 @@
 import pdb
-from math import cos, sin
+from math import cos, sin, atan2
 
 import numpy as np
 
@@ -42,34 +42,48 @@ def linear_eq(point_a, point_b):
   return (m, b)
 
 
+def between_lines(l1, l2, point):
+  x, y = point
+  if(l1[1] > l2[1]):
+    m_l, b_l = l1
+    m_r, b_r = l2
+  else:
+    m_l, b_l = l2
+    m_r, b_r = l1
+  # vertical lines
+  if(m_l == float('inf') or m_r == float('inf')):
+    if(x > b_l and x < b_r):
+      return True
+  below_left = (m_l*x + b_l) > y
+  above_right = (m_r*x + b_r) < y
+  if below_left and above_right:
+    return True
+  return False
+
+
 class BugZero:
   def __init__(self, radius):
     self.radius = radius
-    self.colliding = False
     self.circumnavigating = False
     self.goal = None
 
 
-  def _goal_on_sight(self, position, boundaries):
+  def _goal_on_sight(self, position, orientation, boundaries):
     v = self.radius*unit_vector(self.goal - position)
-    v_left, v_right = rotate_vec(v, 90), rotate_vec(v, -90)
-    m_l, b_l = linear_eq(position + v_left, self.goal + v_left)
-    m_r, b_r = linear_eq(position + v_right, self.goal + v_right)
+    perpen = rotate_vec(v, 90)
+    left_line = linear_eq(position + perpen, self.goal + perpen)
+    right_line = linear_eq(position - perpen, self.goal - perpen)
     boundaries = self._clear_boundaries(boundaries)
     for boundary in boundaries:
-      # no points behind
-      if(boundary[1] < 0):
+      # no points in opposite direction
+      if(boundary[0]*v[0] < 0 and boundary[1]*v[1] < 0):
         continue
-      global_boundary = position + boundary
       dist = np.linalg.norm(boundary)
-      x, y = global_boundary[0], global_boundary[1]
-      if(m_l == float('inf') or m_r == float('inf')):
-        if(x > b_l and x < b_r and dist < self.radius*1.1):
+      point = position + rotate_vec(
+          boundary, -90 + orientation*180/np.pi)
+      in_path = between_lines(left_line, right_line, point)
+      if(in_path and dist < self.radius*1.1):
           return False
-      below_left = (m_l*x + b_l) > y
-      above_right = (m_r*x + b_r) < y
-      if below_left and above_right:
-        return False
     return True
 
 
@@ -89,7 +103,7 @@ class BugZero:
     return min(distances) <= self.radius
 
 
-  def _get_boundary_step(self, boundaries, orientation):
+  def _get_boundary_step(self, boundaries):
     global DEBUG
     # no nan's nor inf's
     boundaries = self._clear_boundaries(boundaries)
@@ -101,15 +115,19 @@ class BugZero:
     RD_angle = angle_between(R, D)
     if(DEBUG):
       pdb.set_trace()
-    relative = -90 + orientation*180/np.pi
     if dist_to_closest > self.radius:
       # relative to the robot
-      return rotate_vec(D, relative)
+      return D
     if RD_angle > (np.pi/2)*(0.98) and RD_angle < (np.pi/2)*1.02:
       # relative to the robot
-      return rotate_vec(D, relative)
-    no_intersect = self.radius*cos(RD_angle)
-    return rotate_vec(np.array([no_intersect, 0]), relative)
+      return D
+    total_angle = atan2(R[1], R[0]) + RD_angle
+    length_ratio = (1 - dist_to_closest/self.radius)
+    no_intersect = self.radius - self.radius*sin(RD_angle)
+    extra = self.radius * (length_ratio*sin(RD_angle))
+    escape_dir = np.array([-sin(total_angle), cos(total_angle)])
+    getaway = escape_dir*(no_intersect + extra)
+    return getaway
 
 
   def _get_goal_step(self, position):
@@ -125,11 +143,10 @@ class BugZero:
       raise Exception('goal is not set in bug object. '
         + 'Please set it with set_goal')
     if self._is_colliding(boundaries) or self.circumnavigating:
-      if self._goal_on_sight(position, boundaries):
+      if self._goal_on_sight(position, orientation, boundaries):
         self.circumnavigating = False
       else:
         self.circumnavigating = True
-        return (self._get_boundary_step(boundaries, orientation),
-          self.circumnavigating)
-    return (self._get_goal_step(position), self.circumnavigating)
+        return self._get_boundary_step(boundaries)
+    return self._get_goal_step(position)
 

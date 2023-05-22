@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import math
+import pdb, math
 
 import rclpy
 from rclpy.node import Node
@@ -19,6 +19,14 @@ TOPIC_LIDAR_SCAN = '/scan'
 TOPIC_VEL_CMD = '/cmd_vel'
 
 DEBUG = False
+
+def minimize_angle(angle):
+  if(angle > np.pi):
+    angle = angle - 2*np.pi
+  elif(angle < -np.pi):
+    angle = 2*np.pi + angle
+  return angle
+
 
 class PuzzlebotBug(Node):
   def __init__(self):
@@ -67,7 +75,7 @@ class PuzzlebotBug(Node):
     target_angle = math.atan2(direction[1], direction[0])
     if(target_angle < 0):
       target_angle = 2*np.pi + target_angle
-    angle_error = target_angle - self.orientation
+    angle_error = minimize_angle(target_angle - self.orientation)
     self.get_logger().info(
       'target angle: %.2f' % (target_angle*180/np.pi) +
       ' orientation: %.2f' % (self.orientation*180/np.pi) +
@@ -80,10 +88,8 @@ class PuzzlebotBug(Node):
       twist_msg.linear.x = 0.15
       twist_msg.angular.z = 0.0
     else:
-      twist_msg.linear.x = 0.0
+      twist_msg.linear.x = 0.015
       sign = (+1 if angle_error > 0 else -1)
-      if(angle_error < 0 and angle_error < -np.pi):
-        sign = +1
       twist_msg.angular.z = 0.20*sign
     self.pub_cmd_vel.publish(twist_msg)
 
@@ -111,8 +117,11 @@ class PuzzlebotBug(Node):
         rate.sleep()
       if len(self.lidar_data) == 0:
         continue
-      step, _ = self.bug.next_step(
+      step = self.bug.next_step(
         self.position, self.orientation, self.lidar_data)
+      if(self.bug.circumnavigating):
+        # direction relative to lidar
+        step = rotate_vec(step, -90 + self.orientation*180/np.pi)
       self.publish_direction(step)
 
 
@@ -125,7 +134,9 @@ def main(args = None):
   try:
     executor.spin_until_future_complete(task)
   except (KeyboardInterrupt, ExternalShutdownException):
-    pass
+    node.stop()
+    node.destroy_node()
+    rclpy.try_shutdown()
   finally:
     node.stop()
     node.destroy_node()
