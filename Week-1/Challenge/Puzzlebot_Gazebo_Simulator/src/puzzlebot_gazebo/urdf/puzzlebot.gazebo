@@ -72,7 +72,7 @@
     <material>Gazebo/Red</material>
     <sensor type="ray" name="rplidar">
       <pose>0 0 0 0 0 0</pose>
-      <visualize>true</visualize>
+      <visualize>false</visualize>
       <update_rate>5.5</update_rate>
       <always_on>true</always_on>
       <ray>
