@@ -8,6 +8,3 @@
 	url = https://github.com/CreedyNZ/rplidar_ros2.git
 	branch = rplidar
 
-[submodule "Week-1/Challenge/Puzzlebot_Gazebo_Simulator/src/aruco_ros2"]
-	path = Week-1/Challenge/Puzzlebot_Gazebo_Simulator/src/aruco_ros2
-	url = https://gitlab.com/raymondchaneee/aruco_ros2.git
