@@ -32,16 +32,10 @@ def generate_launch_description():
         package='puzzlebot_sim', executable='puzzlebot_tf',
         output='screen'
     )
-
-    node_data_gathering = Node (
-        package='puzzlebot_sim', executable='data_gathering',
-        output='screen'
-    )
     
     return LaunchDescription([
         # node_rviz_puzzlebot,
         node_pose_calculation,
         node_tf_puzzlebot,
-        # node_data_gathering,
     ])
 
