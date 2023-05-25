@@ -116,17 +116,12 @@ class BugZero:
     if(DEBUG):
       pdb.set_trace()
     if dist_to_closest > self.radius:
-      # relative to the robot
-      return D
+      return unit_vector(rotate_vec(closest, 90))
     if RD_angle > (np.pi/2)*(0.98) and RD_angle < (np.pi/2)*1.02:
-      # relative to the robot
-      return D
-    total_angle = atan2(R[1], R[0]) + RD_angle
-    length_ratio = (1 - dist_to_closest/self.radius)
-    no_intersect = self.radius - self.radius*sin(RD_angle)
-    extra = self.radius * (length_ratio*sin(RD_angle))
-    escape_dir = np.array([-sin(total_angle), cos(total_angle)])
-    getaway = escape_dir*(no_intersect + extra)
+      return unit_vector(rotate_vec(closest, 90))
+    no_intersect = (self.radius - dist_to_closest)
+    getaway = unit_vector(rotate_vec(closest, 180))*no_intersect
+    getaway += unit_vector(rotate_vec(closest, 90))*no_intersect
     return getaway
 
 

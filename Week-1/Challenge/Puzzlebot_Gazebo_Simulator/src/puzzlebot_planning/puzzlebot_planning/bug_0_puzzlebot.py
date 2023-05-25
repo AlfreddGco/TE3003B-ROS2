@@ -35,7 +35,7 @@ class PuzzlebotBug(Node):
     self.position = np.array([0, 0])
     self.orientation = 0
 
-    self.goal = np.array([7, 0])
+    self.goal = np.array([1.5, 4])
     self.lidar_data = np.array([])
 
     self.bug = BugZero(0.5)
@@ -88,7 +88,7 @@ class PuzzlebotBug(Node):
       twist_msg.linear.x = 0.15
       twist_msg.angular.z = 0.0
     else:
-      twist_msg.linear.x = 0.015
+      twist_msg.linear.x = 0.02
       sign = (+1 if angle_error > 0 else -1)
       twist_msg.angular.z = 0.20*sign
     self.pub_cmd_vel.publish(twist_msg)
