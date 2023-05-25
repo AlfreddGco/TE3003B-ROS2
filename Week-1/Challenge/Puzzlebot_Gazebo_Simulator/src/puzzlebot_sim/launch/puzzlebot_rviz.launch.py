@@ -13,7 +13,8 @@ from launch.actions import SetEnvironmentVariable
 PUZZLEBOT_SIM_PATH = get_package_share_directory('puzzlebot_sim')
 
 RVIZ_PATH = get_package_share_directory('rviz2')
-RVIZ_CONFIG = os.path.join(PUZZLEBOT_SIM_PATH, 'simulation_config.rviz')
+RVIZ_CONFIG = os.path.join(PUZZLEBOT_SIM_PATH, '../simulation_config.rviz')
+# RVIZ_CONFIG = os.path.join(PUZZLEBOT_SIM_PATH, 'simulation_config.rviz')
 
 def generate_launch_description():
     node_rviz_puzzlebot = Node(
@@ -32,16 +33,10 @@ def generate_launch_description():
         package='puzzlebot_sim', executable='puzzlebot_tf',
         output='screen'
     )
-
-    node_data_gathering = Node (
-        package='puzzlebot_sim', executable='data_gathering',
-        output='screen'
-    )
     
     return LaunchDescription([
         node_rviz_puzzlebot,
         node_pose_calculation,
         node_tf_puzzlebot,
-        node_data_gathering,
     ])
 
