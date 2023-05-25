@@ -48,8 +48,8 @@ class PuzzlebotControl(Node):
   def calculate_wheels_speed(self, twist_vel):
       v = twist_vel.linear.x
       w = twist_vel.angular.z
-      wl = (v +  w * L / 2.0) / R
-      wr = (v - w * L / 2.0) / R 
+      wl = (v -  w * L / 2.0) / R
+      wr = (v + w * L / 2.0) / R
       cmd_vels = Float64MultiArray()
       cmd_vels.data.append(wl)
       cmd_vels.data.append(wr)

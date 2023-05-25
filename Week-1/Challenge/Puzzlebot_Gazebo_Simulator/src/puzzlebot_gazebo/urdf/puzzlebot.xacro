@@ -66,7 +66,6 @@
           <sphere radius="${casterRadius}"/>
         </geometry>
       </visual>
-
     </link>
 
     <!--RIGHT WHEEL -->
@@ -153,6 +152,26 @@
           </visual>
         </link> 
 
+        <!-- LIDAR-->
+        <link name="lidar">
+          <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0" />
+            <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
+          </inertial>
+          <collision>
+            <origin xyz="-0.06 0.0 -0.04" rpy="0 0 0" />
+            <geometry>
+              <cylinder length="0.01" radius="0.05"/>
+            </geometry>
+          </collision>
+          <visual>
+            <origin rpy="${PI/2} 0 0" xyz="0.07 -0.013 -0.04" />
+            <geometry>
+              <mesh filename="file://${mesh_lidar}" />
+            </geometry>
+          </visual>
+        </link>
 
         <!-- JOINTS  --> 
 
@@ -179,6 +198,11 @@
               <parent link="chassis" />
               <child link="camera" />
               <origin xyz="0.09 0 0.048" rpy= "0.0 0.24 0.0" />	
+            </joint>
+            <joint name="lidar_to_base" type="fixed">
+              <parent link="chassis"/>
+              <child link="lidar"/>
+              <origin xyz="0.05 0 0.115" rpy="0 0 ${PI}"/>
             </joint>
 
             <!-- TRANSMISSIONS (For a more complex model and it represents actuator attributes) -->

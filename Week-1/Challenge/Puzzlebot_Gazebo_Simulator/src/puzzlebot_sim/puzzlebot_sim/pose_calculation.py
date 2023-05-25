@@ -7,6 +7,7 @@ from time import time
 
 from geometry_msgs.msg import Twist
 from tf2_geometry_msgs import PoseStamped
+from gazebo_msgs.msg import ModelStates
 from std_srvs.srv import Empty
 
 TOPIC_VEL_CMD = '/cmd_vel'
@@ -27,11 +28,26 @@ class PoseCalculation(Node):
         self.t = 0
         self.create_subscription(Twist, TOPIC_VEL_CMD,
             self.calculate_position, 10)
+        self.create_subscription(
+            ModelStates, '/model_states', self.publish_gazebo_pose, 10)
+        self.gt_publisher = self.create_publisher(
+            PoseStamped, '/gt_pose', 10)
         self.publisher_pose = self.create_publisher(
             PoseStamped, TOPIC_CALCULATED_POSE, 10) 
         self.reset_service = self.create_service(
             Empty, 'reset_pose_calculation', self.reset_state)
         self.create_timer(0.01, self.publish_pose_and_transform)
+
+
+    def publish_gazebo_pose(self, msg: ModelStates):
+      idx = msg.name.index('puzzlebot')
+      if(idx == -1):
+        self.get_logger().warn('Puzzlebot not found in msg.name')
+        return
+      gt_msg = PoseStamped()
+      gt_msg.header.stamp = self.get_clock().now().to_msg()
+      gt_msg.pose = msg.pose[idx]
+      self.gt_publisher.publish(gt_msg)
 
 
     def reset_state(self, _, res):
