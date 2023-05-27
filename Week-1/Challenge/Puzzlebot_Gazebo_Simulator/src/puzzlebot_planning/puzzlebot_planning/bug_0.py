@@ -21,14 +21,12 @@ class BugZero:
     right_line = linear_eq(position - perpen, self.goal - perpen)
     boundaries = self._clear_boundaries(boundaries)
     for boundary in boundaries:
-      # no points in opposite direction
-      if(boundary[0]*v[0] < 0 and boundary[1]*v[1] < 0):
-        continue
+      # NOTE: maybe avoid points in opposite direction
       dist = np.linalg.norm(boundary)
       point = position + rotate_vec(
           boundary, -90 + orientation*180/np.pi)
       in_path = between_lines(left_line, right_line, point)
-      if(in_path and dist < self.radius*1.1):
+      if(in_path and dist < self.radius*1.3):
           return False
     return True
 
@@ -62,13 +60,16 @@ class BugZero:
     if(DEBUG):
       pdb.set_trace()
     if dist_to_closest > self.radius:
-      return unit_vector(rotate_vec(closest, 90))
-    if RD_angle > (np.pi/2)*(0.98) and RD_angle < (np.pi/2)*1.02:
-      return unit_vector(rotate_vec(closest, 90))
+      free_space = (dist_to_closest - self.radius)
+      ratio = free_space/(self.radius*0.3)
+      move_left = unit_vector(rotate_vec(closest, 90))*free_space
+      move_closer = unit_vector(closest)*free_space
+      return move_left*(1-ratio) + move_closer*ratio
     no_intersect = (self.radius - dist_to_closest)
+    ratio = no_intersect / self.radius
     getaway = unit_vector(rotate_vec(closest, 180))*no_intersect
-    getaway += unit_vector(rotate_vec(closest, 90))*no_intersect
-    return getaway
+    move_left = unit_vector(rotate_vec(closest, 90))*no_intersect
+    return getaway*ratio + move_left*(1 - ratio)
 
 
   def _get_goal_step(self, position):

@@ -35,10 +35,10 @@ class PuzzlebotBug(Node):
     self.position = np.array([0, 0])
     self.orientation = 0
 
-    self.goal = np.array([1.5, 4])
+    self.goal = np.array([1.7, 4])
     self.lidar_data = np.array([])
 
-    self.bug = BugZero(0.5)
+    self.bug = BugZero(0.3)
     self.bug.set_goal(self.goal)
 
     self.create_subscription(
@@ -82,12 +82,15 @@ class PuzzlebotBug(Node):
     )
     twist_msg = Twist()
     if abs(angle_error) < (2*np.pi)*0.003:
-      twist_msg.linear.x = 0.15
+      twist_msg.linear.x = 0.12
       twist_msg.angular.z = 0.0
     else:
-      twist_msg.linear.x = 0.02
       sign = (+1 if angle_error > 0 else -1)
-      twist_msg.angular.z = 0.20*sign
+      factor = (0.7/1.2)*(abs(angle_error)/np.pi + 0.2)
+      factor = max(0.2, factor)
+      factor = min(0.7, factor)
+      twist_msg.linear.x = 0.03*(2/factor)/5
+      twist_msg.angular.z = factor*sign
     self.pub_cmd_vel.publish(twist_msg)
 
 
@@ -100,7 +103,6 @@ class PuzzlebotBug(Node):
 
   def on_goal(self):
     err = np.linalg.norm(self.goal - self.position)
-    # self.get_logger().info('goal error: %.2f' % err)
     return err < 0.1
 
 
