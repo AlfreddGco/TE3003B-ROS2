@@ -82,13 +82,6 @@ class BugZero:
       in_path = between_lines(left_line, right_line, point)
       if(in_path and dist < self.radius*1.3):
           return False
-    print('Goal on sight')
-    print('Goal on sight')
-    print('Goal on sight')
-    print('Goal on sight')
-    print('Goal on sight')
-    print('Goal on sight')
-    print('Goal on sight')
     return True
 
 
