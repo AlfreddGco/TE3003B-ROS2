@@ -21,11 +21,17 @@ TOPIC_ROBOT_VELOCITY_CMD = '/cmd_vel'
 L = 0.191
 R = 0.05
 
-class PuzzlebotControl(Node):
-  def __init__(self, joints = JOINTS):
-    super().__init__('puzzlebot_control_node')
+class PuzzlebotControl:
+  def __init__(self, nh, joints = JOINTS):
     # velocities unwrapping
-    self.create_subscription(JointState, TOPIC_JOINTS_STATE,
+    self.nh = nh
+    self.create_publisher = nh.create_publisher
+    self.create_subscription = nh.create_subscription
+
+    self.wr = 0.
+    self.wl = 0.
+
+    nh.create_subscription(JointState, TOPIC_JOINTS_STATE,
       self.unwrap_joint_states, 10)
     self.init_joints(joints)
 
@@ -48,11 +54,11 @@ class PuzzlebotControl(Node):
   def calculate_wheels_speed(self, twist_vel):
       v = twist_vel.linear.x
       w = twist_vel.angular.z
-      wl = (v -  w * L / 2.0) / R
-      wr = (v + w * L / 2.0) / R
+      self.wl = (v -  w * L / 2.0) / R
+      self.wr = (v + w * L / 2.0) / R
       cmd_vels = Float64MultiArray()
-      cmd_vels.data.append(wl)
-      cmd_vels.data.append(wr)
+      cmd_vels.data.append(self.wl)
+      cmd_vels.data.append(self.wr)
       self.publisher_wheels_cmd.publish(cmd_vels)
 
 
@@ -67,7 +73,8 @@ class PuzzlebotControl(Node):
 
 def main(args=None):
   rclpy.init(args=args)
-  node = PuzzlebotControl()
+  node = Node('puzzlebot_control_node')
+  control = PuzzlebotControl(node)
   try:
     rclpy.spin(node)
   except (KeyboardInterrupt, ExternalShutdownException):
