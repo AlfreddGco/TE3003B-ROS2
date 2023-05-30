@@ -21,12 +21,34 @@ TOPIC_ROBOT_VELOCITY_CMD = '/cmd_vel'
 L = 0.191
 R = 0.05
 
+def implement_node(obj, nh):
+    obj.nh = nh
+    obj.create_publisher = nh.create_publisher
+    obj.create_subscription = nh.create_subscription
+    obj.create_timer = nh.create_timer
+
+
+class VelocityBroadcaster:
+  def __init__(self, nh):
+    implement_node(self, nh)
+    self.v, self.w = 0.0, 0.0
+    self.publisher_vel = self.create_publisher(
+      Twist, '/cmd_vel', 10)
+    self.create_timer(1/50, self.broadcast_vel)
+
+
+  def broadcast_vel(self):
+    msg = Twist()
+    msg.linear.x = float(self.v)
+    msg.angular.z = float(self.w)
+    self.publisher_vel.publish(msg)
+    
+
+
 class PuzzlebotControl:
   def __init__(self, nh, joints = JOINTS):
     # velocities unwrapping
-    self.nh = nh
-    self.create_publisher = nh.create_publisher
-    self.create_subscription = nh.create_subscription
+    implement_node(self, nh)
 
     self.wr = 0.
     self.wl = 0.
