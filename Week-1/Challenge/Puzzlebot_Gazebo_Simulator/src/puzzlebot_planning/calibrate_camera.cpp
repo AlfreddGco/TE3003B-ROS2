@@ -15,8 +15,8 @@ void printMatrix(cv::Mat& mat, std::string prefix = "K"){
 
 int main(){
 	cv::Mat image, image_gray;
-	const char *pipeline = " tcambin serial=15810833 ! video/x-raw, format=BGRx, width=1280,height=960, framerate=25/1 ! videoconvert ! appsink";
-	cv::VideoCapture input(0);
+	const char *pipeline = "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)640, height=(int)480,format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert !  appsink";
+	cv::VideoCapture input(pipeline);
 
 	std::vector<cv::Point2f> corners_image;
 	std::vector< std::vector<cv::Point2f> > points_image;
