@@ -4,12 +4,14 @@ import rclpy
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 
+from .puzzlebot_camera import PuzzlebotCamera
 from puzzlebot_control import VelocityBroadcaster
 
 class Puzzlebot(Node):
   def __init__(self):
     super().__init__('puzzlebot')
     self.control = VelocityBroadcaster(self)
+    self.camera = PuzzlebotCamera(self)
 
   def run(self):
     # pdb.set_trace()
