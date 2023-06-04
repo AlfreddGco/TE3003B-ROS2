@@ -6,9 +6,8 @@ from cv2 import aruco
 marker_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
 param_markers = aruco.DetectorParameters_create()
 
-MARKER_SIZE = 10
+MARKER_SIZE = 5.5
 
-# ????
 aruco_points_3D = MARKER_SIZE*np.array([
     (-0.5, 0.5, 0.0),        # top left corner
     (0.5, 0.5, 0.0),        # top right corner
@@ -16,13 +15,26 @@ aruco_points_3D = MARKER_SIZE*np.array([
     (-0.5, -0.5, 0.0),        # bottom left corner
 ])
 
+# Alfredo's Camera
 CAMERA_MATRIX = np.array([
-    [385.172671, 0, 319.493898],
-    [0, 516.679629, 231.445904],
+    [1443.9, 0, 975.432],
+    [0, 1434.18, 525.587],
+    [0, 0, 1],
+], dtype = "double")
+
+# Alfredo's Camera
+DIST_COEFF = np.array([1.10863557e-01, -1.23471957e+00, 2.27342121e-04, 6.40102480e-03,
+    1.68010720e+00])
+
+# Puzzlebot Camera
+CAMERA_MATRIX = np.array([
+    [688.7137085, 0, 315.48663694],
+    [0, 900.03895134, 256.8402004],
     [0, 0, 1]
 ], dtype = "double")
 
-DIST_COEFF = np.array([-0.311362, 0.082442, 0.000836, 0.001488])
+# Puzzlebot Camera
+DIST_COEFF = np.array([-0.01032327, 4.012904, -0.003140463, -0.00174154])
 
 class ArucoDetection:
     def __init__(self, camera):
@@ -51,7 +63,3 @@ class ArucoDetection:
                 rot = vector_rotations[0]
                 rot, _ = cv2.Rodrigues(rot)
                 trans = vector_translations[0].flatten()
-                #trans = np.matmul(-rot, trans)
-                screen_point = np.array([corners[0][0][0], corners[0][0][1], 0])
-                world = np.matmul(np.transpose(rot), screen_point) - trans
-                print(world)
