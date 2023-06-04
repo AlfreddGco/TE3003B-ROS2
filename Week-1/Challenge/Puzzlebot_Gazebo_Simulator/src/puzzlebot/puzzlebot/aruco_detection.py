@@ -6,12 +6,14 @@ from cv2 import aruco
 marker_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
 param_markers = aruco.DetectorParameters_create()
 
+MARKER_SIZE = 10
+
 # ????
-aruco_points_3D = np.array([
-    (0.0, 0.0, 0.0),        # top left corner
-    (0.0, 0.0, 0.0),        # top right corner
-    (0.0, 0.0, 0.0),        # bottom left corner
-    (0.0, 0.0, 0.0),        # bottom right corner
+aruco_points_3D = MARKER_SIZE*np.array([
+    (-0.5, 0.5, 0.0),        # top left corner
+    (0.5, 0.5, 0.0),        # top right corner
+    (0.5, -0.5, 0.0),        # bottom right corner
+    (-0.5, -0.5, 0.0),        # bottom left corner
 ])
 
 CAMERA_MATRIX = np.array([
@@ -21,8 +23,6 @@ CAMERA_MATRIX = np.array([
 ], dtype = "double")
 
 DIST_COEFF = np.array([-0.311362, 0.082442, 0.000836, 0.001488])
-
-markerSizeInCM = 10
 
 class ArucoDetection:
     def __init__(self, camera):
@@ -38,11 +38,20 @@ class ArucoDetection:
             frame, marker_dict, parameters=param_markers
         )
         print('Markers:', len(marker_corners))
+        if(len(marker_corners) > 0):
+            print(marker_corners[0])
         self.get_aruco_position(marker_corners, marker_IDs)
 
 
     def get_aruco_position(self, marker_corners, marker_IDs):
         for corners in marker_corners:
-            success, vector_rotations, vector_translations = cv2.solveP3P(
+            retval, vector_rotations, vector_translations = cv2.solveP3P(
                 aruco_points_3D, corners, CAMERA_MATRIX, DIST_COEFF, flags=2)
-            print(success, vector_translations)
+            if(retval > 0):
+                rot = vector_rotations[0]
+                rot, _ = cv2.Rodrigues(rot)
+                trans = vector_translations[0].flatten()
+                #trans = np.matmul(-rot, trans)
+                screen_point = np.array([corners[0][0][0], corners[0][0][1], 0])
+                world = np.matmul(np.transpose(rot), screen_point) - trans
+                print(world)
