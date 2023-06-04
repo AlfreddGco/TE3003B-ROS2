@@ -16,14 +16,14 @@ objp[:,:2] = np.mgrid[0:pattern_size[0],0:pattern_size[1]].T.reshape(-1,2)
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture("nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)640, height=(int)480,format=(string)NV12, framerate=(fraction)10/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert !  appsink")
+
 if not cap.isOpened():
     print('Cannot open camera')
     exit()
 
-
+founds = 0
 while True:
-    # img = cv.imread(fname)
     ret, img = cap.read()
     if not ret:
         print("Can't receive frame (stream end?). Exiting ...")
@@ -32,16 +32,16 @@ while True:
     # Find the chess board corners
     found, corners = cv.findChessboardCorners(gray, pattern_size, None)
     # If found, add object points, image points (after refining them)
+    print('.', end='')
     if found:
-        # corners = np.array([[corner for [corner] in corners]])
+        print('FOUND')
+        founds += 1
         objpoints.append(objp)
         corners2 = cv.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
         imgpoints.append(corners2)
-        # Draw and display the corners
         cv.drawChessboardCorners(img, pattern_size, corners2, found)
-        # cv.imshow('img', img)
     cv.imshow('frame', img)
-    if cv.waitKey(1) == ord('q'):
+    if cv.waitKey(30) == ord('q') or founds >= 100:
         break
 
 cv.destroyAllWindows()
