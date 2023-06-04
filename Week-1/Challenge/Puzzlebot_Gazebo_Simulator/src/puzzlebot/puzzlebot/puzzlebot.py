@@ -5,6 +5,7 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 
 from .puzzlebot_camera import PuzzlebotCamera
+from .aruco_detection import ArucoDetection
 from puzzlebot_control import VelocityBroadcaster
 
 class Puzzlebot(Node):
@@ -12,6 +13,8 @@ class Puzzlebot(Node):
     super().__init__('puzzlebot')
     self.control = VelocityBroadcaster(self)
     self.camera = PuzzlebotCamera(self)
+    self.arucos_detect = ArucoDetection(self.camera)
+
 
   def run(self):
     # pdb.set_trace()
