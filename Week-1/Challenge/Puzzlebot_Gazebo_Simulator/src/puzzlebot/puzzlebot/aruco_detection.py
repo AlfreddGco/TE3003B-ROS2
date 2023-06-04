@@ -22,7 +22,7 @@ CAMERA_MATRIX = np.array([
 
 DIST_COEFF = np.array([-0.311362, 0.082442, 0.000836, 0.001488])
 
-markerSizeInCM = 4
+markerSizeInCM = 10
 
 class ArucoDetection:
     def __init__(self, camera):
@@ -37,11 +37,12 @@ class ArucoDetection:
         marker_corners, marker_IDs, reject = aruco.detectMarkers(
             frame, marker_dict, parameters=param_markers
         )
-        print(marker_corners, marker_IDs)
+        print('Markers:', len(marker_corners))
         self.get_aruco_position(marker_corners, marker_IDs)
 
 
     def get_aruco_position(self, marker_corners, marker_IDs):
         for corners in marker_corners:
-            success, vector_rotations, vector_translations = cv2.solvePnP(
-                aruco_points_3D, corners, CAMERA_MATRIX, DIST_COEFF, flags=0)
+            success, vector_rotations, vector_translations = cv2.solveP3P(
+                aruco_points_3D, corners, CAMERA_MATRIX, DIST_COEFF, flags=2)
+            print(success, vector_translations)

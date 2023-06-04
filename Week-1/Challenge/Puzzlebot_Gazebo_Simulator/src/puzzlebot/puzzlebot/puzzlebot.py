@@ -14,11 +14,12 @@ class Puzzlebot(Node):
     self.control = VelocityBroadcaster(self)
     self.camera = PuzzlebotCamera(self)
     self.arucos_detect = ArucoDetection(self.camera)
+    self.create_timer(1/5, self.run)
 
 
   def run(self):
     # pdb.set_trace()
-    pass
+    self.arucos_detect.detect()
 
 
 def main(args=None):
