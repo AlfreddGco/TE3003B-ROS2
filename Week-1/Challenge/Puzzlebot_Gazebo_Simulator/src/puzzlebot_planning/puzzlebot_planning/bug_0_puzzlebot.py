@@ -71,7 +71,6 @@ class PuzzlebotBug(Node):
 
 
   def publish_direction(self, direction):
-    # direction = rotate_vec(direction, self.orientation*180/np.pi)
     target_angle = math.atan2(direction[1], direction[0])
     if(target_angle < 0):
       target_angle = 2*np.pi + target_angle
@@ -82,8 +81,6 @@ class PuzzlebotBug(Node):
       ' error angle: %.2f' % (angle_error*180/np.pi)
     )
     twist_msg = Twist()
-    #self.get_logger().info(
-    #  'angle error: %.2f %.2f' % (angle_error, 2*np.pi*0.003))
     if abs(angle_error) < (2*np.pi)*0.003:
       twist_msg.linear.x = 0.15
       twist_msg.angular.z = 0.0
