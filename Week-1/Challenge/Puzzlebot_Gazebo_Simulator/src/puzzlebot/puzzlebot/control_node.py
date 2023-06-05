@@ -6,6 +6,8 @@ from std_msgs.msg import Float64, Float64MultiArray
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 
+from utils import implement_node
+
 TOPIC_WHEELS_VEL_CMD = '/velocity_controller/commands'
 # TODO: Load from yaml controller file
 TOPIC_JOINTS_STATE = '/joint_states'
@@ -21,13 +23,6 @@ TOPIC_ROBOT_VELOCITY_CMD = '/cmd_vel'
 L = 0.191
 R = 0.05
 
-def implement_node(obj, nh):
-    obj.nh = nh
-    obj.create_publisher = nh.create_publisher
-    obj.create_subscription = nh.create_subscription
-    obj.create_timer = nh.create_timer
-
-
 class VelocityBroadcaster:
   def __init__(self, nh):
     implement_node(self, nh)
@@ -42,10 +37,14 @@ class VelocityBroadcaster:
     msg.linear.x = float(self.v)
     msg.angular.z = float(self.w)
     self.publisher_vel.publish(msg)
-    
 
 
-class PuzzlebotControl:
+  def stop(self):
+      self.v, self.w = 0.0, 0.0
+ 
+
+
+class MainNode:
   def __init__(self, nh, joints = JOINTS):
     # velocities unwrapping
     implement_node(self, nh)
@@ -96,7 +95,7 @@ class PuzzlebotControl:
 def main(args=None):
   rclpy.init(args=args)
   node = Node('puzzlebot_control_node')
-  control = PuzzlebotControl(node)
+  control = MainNode(node)
   try:
     rclpy.spin(node)
   except (KeyboardInterrupt, ExternalShutdownException):
