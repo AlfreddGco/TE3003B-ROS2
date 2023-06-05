@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import rclpy
 import pdb
 from puzzlebot import Puzzlebot
