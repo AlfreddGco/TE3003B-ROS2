@@ -2,8 +2,8 @@ import pdb
 from math import cos, sin, atan2
 
 import numpy as np
-from puzzlebot.utils import unit_vector, angle_between
-from puzzlebot.utils import linear_eq, between_lines
+from utils import unit_vector, angle_between
+from utils import linear_eq, between_lines
 
 DEBUG = False
 

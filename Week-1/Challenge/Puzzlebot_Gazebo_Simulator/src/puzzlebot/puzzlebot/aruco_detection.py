@@ -1,10 +1,15 @@
 import cv2, time
 import numpy as np
 from threading import Thread
+import cv2
 from cv2 import aruco
 
-marker_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
-param_markers = aruco.DetectorParameters_create()
+if(cv2.__version__ == '4.7.0'):
+    marker_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
+    param_markers =  aruco.DetectorParameters()
+else:
+    marker_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+    param_markers = aruco.DetectorParameters_create()
 
 MARKER_SIZE = 5.5
 
@@ -56,10 +61,12 @@ class ArucoDetection:
 
 
     def get_aruco_position(self, marker_corners, marker_IDs):
-        for corners in marker_corners:
+        for corners, marker_id in zip(marker_corners, marker_IDs):
             retval, vector_rotations, vector_translations = cv2.solveP3P(
                 aruco_points_3D, corners, CAMERA_MATRIX, DIST_COEFF, flags=2)
             if(retval > 0):
                 rot = vector_rotations[0]
                 rot, _ = cv2.Rodrigues(rot)
                 trans = vector_translations[0].flatten()
+
+
