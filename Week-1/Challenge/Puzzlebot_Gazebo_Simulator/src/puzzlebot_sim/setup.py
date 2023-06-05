@@ -26,7 +26,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'pose_calculation = ' + package_name + '.pose_calculation:main',
             'puzzlebot_tf = ' + package_name + '.puzzlebot_tf:main',
             'data_gathering = ' + package_name + '.data_gathering:main',
             'service = pose_calculation:main',
