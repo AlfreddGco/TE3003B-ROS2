@@ -3,7 +3,7 @@ from math import cos, sin, atan2
 
 import numpy as np
 from utils import unit_vector, angle_between
-from utils import linear_eq, between_lines
+from utils import linear_eq, between_lines, rotate_vec
 
 DEBUG = False
 

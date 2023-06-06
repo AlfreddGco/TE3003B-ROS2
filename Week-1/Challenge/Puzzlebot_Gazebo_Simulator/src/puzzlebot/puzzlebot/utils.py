@@ -27,6 +27,9 @@ def minimize_angle(angle):
   return angle
 
 
+trim_angle = minimize_angle
+
+
 def unit_vector(vector):
   """ Returns the unit vector of the vector.  """
   return vector / np.linalg.norm(vector)

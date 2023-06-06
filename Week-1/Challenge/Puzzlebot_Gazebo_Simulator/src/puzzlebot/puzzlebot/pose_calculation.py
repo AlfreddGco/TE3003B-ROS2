@@ -39,7 +39,7 @@ class GazeboPoseBroadcaster:
 class Odometry:
     def __init__(self, nh):
         implement_node(self, nh)
-        self.x, self.y, self.theta = 0.0, 0.0, 0.0
+        self.x, self.y, self.theta = 0.0, 0.0, np.pi/2
         self.wl, self.wr = 0, 0
 
         self.create_subscription(Float32, '/wl', self.update_wl, 10)
@@ -54,6 +54,11 @@ class Odometry:
 
     def update_wr(self, msg):
         self.wr = msg.data
+
+
+    @property
+    def position(self):
+        return np.array([self.x, self.y])
 
 
     def calculate_position(self):

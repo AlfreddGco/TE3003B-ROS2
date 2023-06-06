@@ -1,16 +1,17 @@
 import numpy as np
 import math
+from utils import minimize_angle
 
 class PositionControl:
   def __init__(self, control, odometry):
     # gives position and orientation
     self.control = control
-    self.odometry = odometry 
+    self.odom = odometry 
     self.goal = np.array([0, 0])
   
 
   def on_goal(self):
-    dist = np.linalg.norm(self.goal - self.position)
+    dist = np.linalg.norm(self.goal - self.odom.position)
     return dist < 0.1
 
 
@@ -29,11 +30,11 @@ class PositionControl:
       ' orientation: %.2f' % (orientation*180/np.pi) +
       ' error angle: %.2f' % (angle_error*180/np.pi)
     )
-    if abs(angle_error) < (2*np.pi)*0.003:
+    if abs(angle_error) < (2*np.pi)*0.006:
       self.control.v = 0.15
       self.control.w = 0.0
     else:
       sign = (+1 if angle_error > 0 else -1)
-      self.control.v = 0.02
-      self.control.w = 0.20*sign
+      self.control.v = 0.05
+      self.control.w = 0.10*sign
 

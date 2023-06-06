@@ -1,6 +1,7 @@
 import pdb
 import numpy as np
 import math
+import warnings
 
 import rclpy
 from rclpy.node import Node
@@ -31,32 +32,39 @@ class Puzzlebot(Node):
 
   def destroy_node(self):
     self.control.stop()
+    self.control.broadcast_vel()
     self.camera.release()
     super().destroy_node()
 
 
   def run(self):
-    self.position_control.set_goal(0, 3)
-    rate = self.create_rate(100)
+    self.position_control.set_goal(0, 1.8)
+    self.bug.set_goal(self.position_control.goal)
+
+    rate = self.create_rate(50)
 
     while len(self.lidar.data) == 0:
+      warnings.warn('No lidar data yet...')
       rate.sleep()
 
-    while not self.on_goal():
+    print('Starting up bug algo')
+    while not self.position_control.on_goal():
       rate.sleep()
       step = self.bug.next_step(
-        self.odom.position, self.odom.orientation,
+        self.odom.position, self.odom.theta,
         self.lidar.data)
       if(self.bug.circumnavigating):
         # direction relative to lidar
-        step = rotate_vec(step, -90 + self.orientation*180/np.pi)
+        step = rotate_vec(step, -90 + self.odom.theta*180/np.pi)
+      print('VEL:', self.control.v, self.control.w, 'STEP:', step)
       self.position_control.publish_direction(step)
 
 
 def main(args=None):
   rclpy.init(args=args)
-  executor = MultiThreadedExecutor()
+  executor = MultiThreadedExecutor(num_threads=4)
   node = Puzzlebot()
+  executor.add_node(node)
   task = executor.create_task(node.run)
   try:
     executor.spin_until_future_complete(task)
