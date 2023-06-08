@@ -1,17 +1,19 @@
 import cv2, time
+from cv2 import aruco
 import numpy as np
 from threading import Thread
-import cv2
-from cv2 import aruco
+from utils import implement_node, rotate_vec
 
+
+DICT = aruco.DICT_4X4_250
 if(cv2.__version__ == '4.7.0'):
-    marker_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
+    marker_dict = aruco.getPredefinedDictionary(DICT)
     param_markers =  aruco.DetectorParameters()
 else:
-    marker_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+    marker_dict = aruco.Dictionary_get(DICT)
     param_markers = aruco.DetectorParameters_create()
 
-MARKER_SIZE = 5.5
+MARKER_SIZE = 4.0 / 100
 
 aruco_points_3D = MARKER_SIZE*np.array([
     (-0.5, 0.5, 0.0),        # top left corner
@@ -41,32 +43,75 @@ CAMERA_MATRIX = np.array([
 # Puzzlebot Camera
 DIST_COEFF = np.array([-0.01032327, 4.012904, -0.003140463, -0.00174154])
 
+class Aruco:
+    def __init__(self, _id, position = (0, 0)):
+        self.id = _id
+        x, y = position
+        self.position = np.array([x, y])
+        self.rotation = np.array([0, 0, 0])
+        self.collected = False 
+        self.detections = []
+    
+    def add_detection(self, rot, trans, odom):
+        if(len(self.detections) == 0):
+            self.rotation = rot
+            self.position = odom.position + trans
+            self.detections.append(self.position)
+            # self.position = np.mean(np.array(self.detections), axis=0)
+        # Model: aruco doesnt move
+        predicted_odom = self.position - trans
+        self.estimated_odom = predicted_odom + 7/10*(odom.position - predicted_odom)
+        odom.filtered_position = self.estimated_odom
+        #print("m p e", odom.position[1], predicted_odom[1], self.estimated_odom[1])
+        #print('Estimated:', estimated_odom, odom.position, predicted_odom)
+
+
 class ArucoDetection:
-    def __init__(self, camera):
+    def __init__(self, nh, camera, arucos, odom):
+        implement_node(self, nh)
         self.camera = camera
-        self.arucos = []
+        self.arucos = arucos
+        self.odom = odom
+        # self.create_timer(1/60, self.detect)
 
 
     def detect(self):
         frame = self.camera.frame
-        if(frame is None):
+        if (frame is None):
             return
-        marker_corners, marker_IDs, reject = aruco.detectMarkers(
-            frame, marker_dict, parameters=param_markers
-        )
-        print('Markers:', len(marker_corners))
-        if(len(marker_corners) > 0):
-            print(marker_corners[0])
-        self.get_aruco_position(marker_corners, marker_IDs)
+        marker_corners, marker_ids, _ = aruco.detectMarkers(
+                frame, marker_dict, parameters=param_markers)
+        if(marker_ids is not None):
+            marker_ids = marker_ids.flatten()
+            # print('Markers:', len(marker_corners), marker_ids)
+            self.get_aruco_position(marker_corners, marker_ids)
 
 
-    def get_aruco_position(self, marker_corners, marker_IDs):
-        for corners, marker_id in zip(marker_corners, marker_IDs):
-            retval, vector_rotations, vector_translations = cv2.solveP3P(
-                aruco_points_3D, corners, CAMERA_MATRIX, DIST_COEFF, flags=2)
+    def correct_odometry(self):
+        pass
+
+
+    def get_aruco_position(self, marker_corners, marker_ids):
+        for corners, markerId in zip(marker_corners, marker_ids):
+            retval, vectorRotations, vectorTranslations = cv2.solveP3P(
+                aruco_points_3D, corners, 
+                CAMERA_MATRIX, DIST_COEFF, 
+                flags=2)
             if(retval > 0):
-                rot = vector_rotations[0]
-                rot, _ = cv2.Rodrigues(rot)
-                trans = vector_translations[0].flatten()
-
+                markerRotation, _ = cv2.Rodrigues(vectorRotations[0])
+                markerTranslation = vectorTranslations[0].flatten()
+                self.update_aruco_position(
+                    markerId, markerRotation, markerTranslation)
+    
+    
+    def update_aruco_position(self, marker_id, rot, trans):
+        for aruco in self.arucos:
+            if(aruco.id == marker_id):
+                # x, y
+                relative_pos = np.array([trans[2], trans[0]])
+                relative_pos = rotate_vec(
+                    relative_pos, np.rad2deg(self.odom.theta))
+                aruco.add_detection(
+                    rot, relative_pos, self.odom)
+                break
 
