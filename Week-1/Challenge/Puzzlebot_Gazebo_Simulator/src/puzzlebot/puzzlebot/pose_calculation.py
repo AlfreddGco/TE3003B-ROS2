@@ -37,15 +37,17 @@ class GazeboPoseBroadcaster:
 
 
 class Odometry:
-    def __init__(self, nh):
+    def __init__(self, nh, control):
         implement_node(self, nh)
         self.x, self.y, self.theta = 0.0, 0.0, np.pi/2
         self.wl, self.wr = 0, 0
+        self.t = self.get_time()
+        self.filtered_position = np.array([0, 0])
+        self.control = control
 
-        self.create_subscription(Float32, '/wl', self.update_wl, 10)
-        self.create_subscription(Float32, '/wr', self.update_wr, 10)
-        self.rate = 50
-        self.create_timer(1/self.rate, self.calculate_position)
+        #self.create_subscription(Float32, '/wl', self.update_wl, 10)
+        #self.create_subscription(Float32, '/wr', self.update_wr, 10)
+        self.create_timer(1/50, self.calculate_position)
 
 
     def update_wl(self, msg):
@@ -56,19 +58,27 @@ class Odometry:
         self.wr = msg.data
 
 
+    def get_time(self):
+        return self.nh.get_clock().now().nanoseconds / 1e9
+
+
     @property
     def position(self):
         return np.array([self.x, self.y])
 
 
     def calculate_position(self):
-        L, R = 0.08, 0.05
-        MAT = np.array([[.5, .5], [1/L, -1/L]])
-        dv, dw = np.dot(MAT, np.array([self.wr, self.wl])*R)
-        dt = 1/self.rate
+        #L, R = 0.08, 0.05
+        #MAT = np.array([[.5, .5], [1/L, -1/L]])
+        #dv, dw = np.dot(MAT, np.array([self.wr, self.wl])*R)
+        now = self.get_time()
+        dt = now - self.t
+        dv = self.control.v
+        dw = self.control.w
         self.x += (dv * math.cos(self.theta))*dt
         self.y += (dv * math.sin(self.theta))*dt
         self.theta += dw*dt
+        self.t = now
 
 
 
