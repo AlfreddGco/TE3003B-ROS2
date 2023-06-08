@@ -7,12 +7,12 @@ class PositionControl:
     # gives position and orientation
     self.control = control
     self.odom = odometry 
-    self.goal = np.array([0, 0])
+    self.goal = np.array([0.0, 0.0])
   
 
   def on_goal(self):
     dist = np.linalg.norm(self.goal - self.odom.position)
-    return dist < 0.1
+    return dist < 0.03
 
 
   def set_goal(self, x, y):
@@ -25,13 +25,15 @@ class PositionControl:
     if(target_angle < 0):
       target_angle = 2*np.pi + target_angle
     angle_error = minimize_angle(target_angle - orientation)
+    '''
     print(
       'target angle: %.2f' % (target_angle*180/np.pi) +
       ' orientation: %.2f' % (orientation*180/np.pi) +
       ' error angle: %.2f' % (angle_error*180/np.pi)
     )
+    '''
     if abs(angle_error) < (2*np.pi)*0.006:
-      self.control.v = 0.15
+      self.control.v = 0.1
       self.control.w = 0.0
     else:
       sign = (+1 if angle_error > 0 else -1)
